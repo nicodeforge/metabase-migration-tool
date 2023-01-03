@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
+import { NgModule } from "@angular/core";
 import { BrowserModule } from '@angular/platform-browser';
-import {SelectButtonModule} from 'primeng/selectbutton';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { SelectButtonModule } from "primeng/selectbutton";
 
 @NgModule({
   declarations: [
@@ -17,4 +17,4 @@ import { AppComponent } from './app.component';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
