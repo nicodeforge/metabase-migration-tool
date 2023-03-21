@@ -1,0 +1,27 @@
+<div class="grid">
+  <div class="col-6">
+    <p-card header="Duplicate a dashboard across instances">
+      <p>
+        This tool lets you easily duplicate a dashboard and the cards it holds
+        across two Metabase instances.
+      </p>
+      <p>
+        To use it, you must be registered as an administrator in both instances
+      </p>
+
+      <p-button
+        label="Use it"
+        (onClick)="onDuplicateDashboardClick()"
+      ></p-button>
+    </p-card>
+  </div>
+  <div class="col-6">
+    <p-card header="Manage your instances">
+      <p>Add, update or delete your instances</p>
+      <p-button label="Go" (onClick)="onInstanceClick()"></p-button>
+    </p-card>
+  </div>
+  <div class="col-12">
+    <p-button label="Test refresh token" (onClick)="testRefresh()"> </p-button>
+  </div>
+</div>

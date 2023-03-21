@@ -1,0 +1,29 @@
+<form [formGroup]="instanceForm">
+  <div class="p-input-group">
+    <label
+      >From which instance :
+      <p-selectButton
+        [options]="instances"
+        optionValue="id"
+        optionLabel="name"
+        formControlName="originInstance"
+        id="originInstanceSelect"
+        (onChange)="onSelectOriginInstance()"
+      ></p-selectButton>
+    </label>
+    <p>&nbsp;</p>
+    <label
+      >To which instance :
+      <p-selectButton
+        [options]="instances"
+        formControlName="destinationInstance"
+        (onChange)="onSelectDestinationInstance()"
+        optionDisabled="inactive"
+        optionValue="id"
+        optionLabel="name"
+        id="destinationInstanceSelect"
+      ></p-selectButton>
+    </label>
+    <p>&nbsp;</p>
+  </div>
+</form>

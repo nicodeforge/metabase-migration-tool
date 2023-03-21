@@ -1,0 +1,420 @@
+<div class="grid p-fluid">
+  <div class="col-12">
+    <p-card
+      [header]="
+        originInstance.name && destinationInstance.name
+          ? 'Copy dashboard from ' +
+            originInstance.name +
+            ' to ' +
+            destinationInstance.name
+          : 'Copy dashboard across instances'
+      "
+    >
+      <div class="grid m-2">
+        <div class="col">
+          <p-steps
+            [model]="steps"
+            [activeIndex]="step - 1"
+            [readonly]="false"
+            (click)="onSelectStep($event)"
+            class="p-2"
+          ></p-steps>
+        </div>
+      </div>
+
+      <form
+        [formGroup]="originForm"
+        (ngSubmit)="onOriginFormSubmit()"
+        *ngIf="step === 1 && isLoaded"
+      >
+        <div class="p-input-group">
+          <label
+            >From which instance :
+            <p-selectButton
+              [options]="instances"
+              optionValue="id"
+              optionLabel="name"
+              formControlName="originInstance"
+              (onChange)="onSelectOriginInstance()"
+            ></p-selectButton>
+          </label>
+          <p>&nbsp;</p>
+          <label
+            >To which instance :
+            <p-selectButton
+              [options]="instances"
+              formControlName="destinationInstance"
+              (onChange)="onSelectDestinationInstance()"
+              optionDisabled="inactive"
+              optionValue="id"
+              optionLabel="name"
+            ></p-selectButton>
+          </label>
+          <p>&nbsp;</p>
+          <!--          <label>Which dashbaord ID ?-->
+          <!--            <p-inputNumber formControlName="dashboardId" ></p-inputNumber>-->
+          <p-multiSelect
+            [options]="originDashboards"
+            [selectionLimit]="selectionLimit"
+            formControlName="originDashboard"
+            selectedItemsLabel="display_label"
+            optionLabel="display_label"
+            optionValue="id"
+            placeholder="Origin dashboard"
+            emptyMessage="Please select an origin instance"
+            (onChange)="onSelectDashboard()"
+          ></p-multiSelect>
+
+          <!--          </label>-->
+          <div class="grid mt-5">
+            <div class="col">
+              <button
+                pButton
+                type="submit"
+                label="Next"
+                [loading]="!isLoaded"
+                [disabled]="
+                  !originInstance ||
+                  !destinationInstance ||
+                  !isDashboardSelected
+                "
+              ></button>
+            </div>
+          </div>
+          <!--          <p-progressSpinner *ngIf="!isLoaded"></p-progressSpinner>-->
+        </div>
+      </form>
+
+      <div *ngIf="step == 2 && isLoaded" class="grid">
+        <p-card class="col-12 mt-2" header="Map following databases">
+          <p>
+            You MUST map databases. Each database in the origin instance MUST
+            have its equivalent in the destination
+          </p>
+
+          <p-table
+            [value]="dashboardWithDependencies.dependencies.databases"
+            dataKey="id"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>&nbsp;</th>
+                <th colspan="2">Instance : {{ originInstance.name }}</th>
+                <th>Instance : {{ destinationInstance.name }}</th>
+              </tr>
+              <tr>
+                <th>Mapped ?</th>
+                <th>Database ID</th>
+                <th>Database Name</th>
+                <th>Database ID</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-database let-editing="editing">
+              <tr
+                [ngClass]="
+                  database.existsInDestination === true
+                    ? 'mapped'
+                    : 'unmapped' && database.isMapped === true
+                    ? 'mapped'
+                    : 'unmapped'
+                "
+              >
+                <td>
+                  <i
+                    *ngIf="database.existsInDestination || database.isMapped"
+                    class="pi pi-check-circle"
+                  ></i>
+                  <i
+                    *ngIf="!database.existsInDestination && !database.isMapped"
+                    class="pi pi-ban"
+                  ></i>
+                </td>
+                <td>{{ database.origin.id }}</td>
+                <td>{{ database.origin.name }}</td>
+                <td
+                  [pEditableColumn]="database.destination.id"
+                  pEditableColumnField="id"
+                >
+                  <p-cellEditor
+                    class="pi pi-pencil"
+                    (change)="
+                      onSelectDatabase(
+                        database.origin.id,
+                        database.destination.id
+                      )
+                    "
+                  >
+                    <ng-template pTemplate="input">
+                      <input
+                        pInputText
+                        type="number"
+                        [(ngModel)]="database.destination.id"
+                      />
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{ database.destination.id }}
+                    </ng-template>
+                  </p-cellEditor>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-card>
+
+        <p-card
+          *ngIf="dashboardWithDependencies.dependencies.collections.length > 0"
+          header="Map or create following collections"
+          class="col-12 mt-2"
+        >
+          <p-table
+            [value]="dashboardWithDependencies.dependencies.collections"
+            dataKey="id"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>&nbsp;</th>
+                <th colspan="3">Instance : {{ originInstance.name }}</th>
+                <th colspan="4">Instance : {{ destinationInstance.name }}</th>
+              </tr>
+              <tr>
+                <th>Mapped ?</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Create new ?</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Location</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-collection let-editing="editing">
+              <tr
+                [ngClass]="
+                  collection.existsInDestination === true
+                    ? 'mapped'
+                    : 'unmapped' && collection.isMapped === true
+                    ? 'mapped'
+                    : 'unmapped'
+                "
+              >
+                <td>
+                  <i
+                    *ngIf="
+                      collection.existsInDestination || collection.isMapped
+                    "
+                    class="pi pi-check-circle"
+                  ></i>
+                  <i
+                    *ngIf="
+                      !collection.existsInDestination && !collection.isMapped
+                    "
+                    class="pi pi-ban"
+                  ></i>
+                </td>
+                <td>{{ collection.origin.id }}</td>
+                <td>{{ collection.origin.name }}</td>
+                <td>{{ collection.origin.location }}</td>
+                <td>
+                  <p-inputSwitch
+                    [(ngModel)]="collection.createInDestination"
+                    [disabled]="collection.existsInDestination"
+                    (onChange)="onCreateCollectionSwitch(collection.origin.id)"
+                  ></p-inputSwitch>
+                </td>
+                <td>{{ collection?.destination?.id }}</td>
+                <td>{{ collection?.destination?.name }}</td>
+                <td>{{ collection?.destination?.location }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-card>
+
+        <p-card header="Map following users : " class="col-12 mt-2">
+          <p-table
+            [value]="dashboardWithDependencies.dependencies.users"
+            dataKey="id"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>&nbsp;</th>
+                <th colspan="2">Instance : {{ originInstance.name }}</th>
+                <th colspan="2">Instance : {{ destinationInstance.name }}</th>
+              </tr>
+              <tr>
+                <th>Mapped ?</th>
+                <th>ID</th>
+                <th>Email</th>
+                <th>ID</th>
+                <th>Email</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-user let-editing="editing">
+              <tr
+                [ngClass]="
+                  user.existsInDestination === true
+                    ? 'mapped'
+                    : 'unmapped' && user.isMapped === true
+                    ? 'mapped'
+                    : 'unmapped'
+                "
+              >
+                <td>
+                  <i
+                    *ngIf="user.existsInDestination || user.isMapped"
+                    class="pi pi-check-circle"
+                  ></i>
+                  <i
+                    *ngIf="!user.existsInDestination && !user.isMapped"
+                    class="pi pi-ban"
+                  ></i>
+                </td>
+                <td>{{ user.origin.id }}</td>
+                <td>{{ user.origin.email }}</td>
+                <td
+                  [pEditableColumn]="user?.destination?.id"
+                  pEditableColumnField="id"
+                >
+                  <p-cellEditor
+                    class="pi pi-pencil"
+                    (change)="onSelectUser(user.origin.id, user.destination.id)"
+                  >
+                    <ng-template pTemplate="input">
+                      <input
+                        pInputText
+                        type="number"
+                        [(ngModel)]="user.destination.id"
+                      />
+                      <!--<select pInputText [(ngModel)]="user.destination.id">
+                        <option
+                          *ngFor="let user of destinationUsers"
+                          [ngValue]="user.id"
+                        >
+                          {{ user.email }} (#{{ user.id }})
+                        </option>
+                      </select>-->
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{ user?.destination?.id }}
+                    </ng-template>
+                  </p-cellEditor>
+                </td>
+                <td>{{ user?.destination?.email }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-card>
+
+        <p-card
+          *ngIf="dashboardWithDependencies.existsInDestination"
+          header="A dashboard with name
+              {{ dashboardWithDependencies.dashboard.name }} was found in
+              destination."
+          class="col-12 mt-2"
+        >
+          <p>You can create a new one or update this existing one :</p>
+          <p-selectButton
+            [options]="updateOrCreate"
+            (onChange)="onUpdateOrCreateDashboard()"
+            [(ngModel)]="dashboardWithDependencies.dashboard.createOrUpdate"
+          ></p-selectButton>
+        </p-card>
+
+        <div class="col-12 mt-5">
+          <span class="p-buttonset">
+            <button
+              type="button"
+              pButton
+              label="Go back"
+              class="p-button-secondary"
+              (click)="onPreviousStep()"
+            ></button>
+            <button
+              pButton
+              [label]="step2SubmitLabel"
+              (click)="onSubmitStep2()"
+              [disabled]="!entitiesMapped"
+            ></button>
+          </span>
+        </div>
+      </div>
+      <div class="grid" *ngIf="step === 2 && !isLoaded">
+        <div class="col-12">
+          <p-progressSpinner></p-progressSpinner>
+          <p class="mt-5">
+            Fetching your dashboard. This can take a couple minutes
+          </p>
+        </div>
+      </div>
+      <div *ngIf="step === 3">
+        <h2>
+          Review carefully what will be created on instance "{{
+            destinationInstance
+          }}" :
+        </h2>
+
+        <h3>Dashboard :</h3>
+        <ul>
+          <li>
+            {{ newDashboard.dashboard.name }}, with
+            {{ newDashboard.dashboard.ordered_cards.length }} cards :
+            <ul>
+              <li *ngFor="let card of newDashboard.dashboard.ordered_cards">
+                <span *ngIf="card.card.name"
+                  >[QUESTION] {{ card.card.name }}</span
+                >
+                <span *ngIf="!card.card.name"
+                  >[TEXT]{{ card.visualization_settings.text }}</span
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <h3>Collections :</h3>
+        <ul>
+          <li *ngFor="let collection of newDashboard.collections">
+            {{ collection.name }}
+            <p-badge [value]="collection.toCreate ? 'New' : 'Mapped'"></p-badge>
+          </li>
+        </ul>
+        <span class="p-buttonset">
+          <button
+            type="button"
+            pButton
+            label="Go back"
+            class="p-button-secondary"
+            (click)="onPreviousStep()"
+          ></button>
+          <button
+            type="button"
+            pButton
+            label="Confirm"
+            (click)="onSubmitStep3()"
+          ></button>
+        </span>
+      </div>
+
+      <div class="grid" *ngIf="step === 4">
+        <div class="col-12" *ngIf="!isLoaded">
+          <h2>Your new dashboard is being cooked...</h2>
+          <p-progressSpinner *ngIf="!isLoaded"></p-progressSpinner>
+        </div>
+
+        <div class="col-12" *ngIf="isLoaded && newDashboardUrl">
+          <h2>HOURA ! A new dashboard was created</h2>
+          <p-button
+            label="Go to dashboard"
+            (onClick)="onNavigateToDashboard()"
+          ></p-button>
+        </div>
+
+        <div class="col-12" *ngIf="isLoaded && !newDashboardUrl">
+          <h2>DAMN ! There has been a problem processing your request</h2>
+          <p>Please check the console</p>
+        </div>
+        <div class="col-12">
+          <p-button label="Back to start" (onClick)="onRestart()"></p-button>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+<p-card [header]="'Hello ' + user.name">
+  <div class="grid">
+    <div class="col-12">
+      <p>You have {{ user.instances.length }} instances registered</p>
+
+      <button
+        pButton
+        class="p-button-text"
+        label="Add"
+        icon="pi pi-plus-circle"
+        routerLink="/instance/create"
+      ></button>
+    </div>
+    <p-splitter></p-splitter>
+    <div class="col-12 mt-5">
+      <p>Your name : {{ user.name }}</p>
+      <p>Your email : {{ user.email }}</p>
+      <button
+        pButton
+        class="p-button-text"
+        label="Edit"
+        icon="pi pi-pencil"
+        (click)="onEditUser()"
+      ></button>
+    </div>
+  </div>
+</p-card>

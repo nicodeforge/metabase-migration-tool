@@ -1,0 +1,45 @@
+<h2>
+  Review carefully what will be created on instance "{{
+    destinationInstance.name
+  }}" :
+</h2>
+
+<h3>Model : {{ modelTypeName }}</h3>
+<ul *ngIf="modelType === 0 && dashboardToCreate">
+  <li>
+    {{ dashboardToCreate.dashboard.name }}, with
+    {{ dashboardToCreate.dashboard.ordered_cards.length }} cards :
+    <ul>
+      <li *ngFor="let dashcard of dashboardToCreate.dashboard.ordered_cards">
+        <span *ngIf="dashcard.card.name"
+          >[QUESTION] {{ dashcard.card.name }}</span
+        >
+        <span *ngIf="!dashcard.card.name"
+          >[TEXT]{{ dashcard.visualization_settings.text }}</span
+        >
+      </li>
+    </ul>
+  </li>
+</ul>
+<ul *ngIf="modelType === 1">
+  <li>
+    {{ modelToCreate.model.name }}
+  </li>
+</ul>
+<h3>Collections :</h3>
+<ul>
+  <li *ngFor="let collection of modelToCreate.collections">
+    {{ collection.name }}
+    <p-badge [value]="collection.toCreate ? 'New' : 'Mapped'"></p-badge>
+  </li>
+</ul>
+<span class="p-buttonset">
+  <button
+    type="button"
+    pButton
+    label="Go back"
+    class="p-button-secondary"
+    (click)="onPreviousStep()"
+  ></button>
+  <button type="button" pButton label="Confirm" (click)="onSubmit()"></button>
+</span>

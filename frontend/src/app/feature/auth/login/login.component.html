@@ -1,0 +1,59 @@
+<p-card [header]="formName">
+  <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+    <span class="p-float-label mb-5" *ngIf="formMode === 'signup'">
+      <input
+        type="text"
+        id="name"
+        name="name"
+        pInputText
+        ngModel
+        required
+        autocomplete="name"
+      />
+      <label for="name">What's your name</label>
+    </span>
+
+    <span class="p-float-label">
+      <input
+        type="email"
+        id="emailInput"
+        name="email"
+        pInputText
+        ngModel
+        required
+        email
+        autocomplete="email"
+      />
+      <label for="emailInput">Email</label>
+    </span>
+    <span class="p-float-label mt-5">
+      <input
+        type="password"
+        id="passwordInput"
+        name="password"
+        pInputText
+        ngModel
+        required
+        autocomplete="current-password"
+      />
+      <label for="passwordInput">Password</label>
+    </span>
+    <button
+      class="button mt-5"
+      [label]="formMode === 'signup' ? 'Sign up' : 'Sign in'"
+      pButton
+      type="submit"
+      [disabled]="form.invalid"
+    ></button>
+    <button
+      class="p-button-text mt-1"
+      [label]="
+        formMode === 'signup'
+          ? 'I do have an account, sign me in'
+          : 'I don\'t have an account, sign me up'
+      "
+      pButton
+      (click)="onSwitchFormMode()"
+    ></button>
+  </form>
+</p-card>

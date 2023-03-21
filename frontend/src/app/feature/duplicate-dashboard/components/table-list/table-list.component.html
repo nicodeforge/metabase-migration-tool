@@ -1,0 +1,17 @@
+<p><strong>The following tables are missing in destination</strong></p>
+<p *ngFor="let table of tables">{{ table }}</p>
+<p>If you are confident that it is not an issue, you can proceed anyway</p>
+<span class="p-buttonset">
+  <button
+    pButton
+    label="Proceed anyway"
+    class="p-button-danger"
+    (click)="onConfirmMapping(true)"
+  ></button>
+  <button
+    pButton
+    label="Cancel"
+    class="p-button-primary"
+    (click)="onConfirmMapping(false)"
+  ></button>
+</span>

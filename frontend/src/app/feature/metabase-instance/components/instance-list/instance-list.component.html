@@ -1,0 +1,74 @@
+<div class="grid">
+  <div class="col-12" *ngIf="hasInstances">
+    <p-table [value]="instances">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Name</th>
+          <th>URL</th>
+          <th>Username</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-instance>
+        <tr>
+          <td>{{ instance.name }}</td>
+          <td>{{ instance.url }}</td>
+          <td>{{ instance.username }}</td>
+          <td>
+            <span *ngIf="instance.token" class="pi pi-check-circle"></span>
+            <span>&nbsp;</span>
+            <span
+              *ngIf="instance.token"
+              class="text-link"
+              (click)="onConnectInstance(instance.id)"
+              >Check connection</span
+            >
+            <button
+              *ngIf="!instance.token"
+              (click)="onConnectInstance(instance.id)"
+              pButton
+              type="button"
+              icon="pi pi-database"
+              class="p-button-text"
+              label="Connect"
+            ></button>
+          </td>
+          <td>
+            <span class="p-buttonset">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-pencil"
+                iconPos="left"
+                class="p-button-sm p-button-info"
+                (click)="onUpdateInstance(instance.id)"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                iconPos="left"
+                class="p-button-sm p-button-danger"
+                (click)="onDeleteInstance(instance.id)"
+              ></button>
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-button
+      label="Create an instance"
+      (onClick)="onCreateInstance()"
+    ></p-button>
+    <p-button label="Refresh list" (onClick)="onRefreshList()"></p-button>
+  </div>
+  <div class="col-12">
+    <p-card *ngIf="!hasInstances" header="No instance found">
+      <p-button
+        label="Create an instance"
+        (onClick)="onCreateInstance()"
+      ></p-button>
+    </p-card>
+  </div>
+</div>

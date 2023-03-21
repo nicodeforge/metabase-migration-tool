@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:14-bullseye
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:?err}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
+      - POSTGRES_DB=${POSTGRES_DB:?err}
+      - PGDATA=${PGDATA:?err}
+    ports:
+      - '38100:5432'
+    volumes:
+      - ./local/db:/var/lib/postgresql/dashboard:Z
+

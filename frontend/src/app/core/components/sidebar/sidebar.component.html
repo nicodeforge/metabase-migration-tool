@@ -1,0 +1,8 @@
+<!--<p-panelMenu [model]="userMenuItems" class="grid"></p-panelMenu>-->
+<p-menu [model]="userMenuItems" class="grid">
+  <ng-template>
+    <a [routerLink]="isAuthenticated === true ? '/app' : '/'" class="app-title">
+      <strong class="mr-5">Metabase Migration Tool</strong></a
+    >
+  </ng-template>
+</p-menu>

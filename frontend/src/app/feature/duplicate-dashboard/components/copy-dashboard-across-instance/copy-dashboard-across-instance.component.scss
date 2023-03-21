@@ -1,0 +1,25 @@
+.p-editable-column{
+  &.p-cell-editing{
+
+    .pi-pencil:before{
+      content: ""
+    }
+
+  }
+  .pi-pencil{
+    cursor: pointer;
+  }
+}
+
+tr.mapped{
+  .pi,td{
+    color: rgb(7, 94, 7);
+  }
+  background: rgba(46, 186, 46, 0.2);
+}
+tr.unmapped{
+  .pi,td{
+    color: rgb(94, 7, 7);
+  }
+  background: rgba(255, 0, 0, 0.2);
+}

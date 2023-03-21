@@ -1,0 +1,20 @@
+<div class="col-12" *ngIf="!isLoaded">
+  <h2>Your new {{ modelTypeName }} is being cooked...</h2>
+  <p-progressSpinner *ngIf="!isLoaded"></p-progressSpinner>
+</div>
+
+<div class="col-12" *ngIf="isLoaded && modelResponse.url">
+  <h2>HOURA ! A new {{ modelTypeName }} was created</h2>
+  <p-button
+    [label]="'Go to ' + modelTypeName"
+    (onClick)="onNavigateToModel()"
+  ></p-button>
+</div>
+
+<div class="col-12" *ngIf="isLoaded && !modelResponse.url">
+  <h2>DAMN ! There has been a problem processing your request</h2>
+  <p>Please check the console</p>
+</div>
+<div class="col-12">
+  <p-button label="Back to start" (onClick)="handleRestart()"></p-button>
+</div>

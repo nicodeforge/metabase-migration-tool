@@ -1,0 +1,29 @@
+<div class="grid">
+  <div class="col-12">
+    <form
+      [formGroup]="instanceConnectForm"
+      class="grid"
+      (ngSubmit)="onFormSubmit()"
+    >
+      <div class="col-12">
+        <input
+          type="password"
+          pInputText
+          formControlName="password"
+          placeholder="Input your password"
+        />
+      </div>
+      <div class="col-12">
+        <button
+          pButton
+          type="submit"
+          label="Connect"
+          [disabled]="instanceConnectForm.invalid"
+        ></button>
+      </div>
+    </form>
+  </div>
+  <div class="col-12">
+    <p>You password will not be stored anywhere in this application</p>
+  </div>
+</div>

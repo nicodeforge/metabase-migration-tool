@@ -1,0 +1,240 @@
+<div *ngIf="isLoaded">
+  <p-card class="col-12 mt-2" header="Map following databases">
+    <p>
+      You MUST map databases. Each database in the origin instance MUST have its
+      equivalent in the destination
+    </p>
+
+    <p-table [value]="model.dependencies.databases" dataKey="id">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>&nbsp;</th>
+          <th colspan="2">Instance : {{ originInstance.name }}</th>
+          <th>Instance : {{ destinationInstance.name }}</th>
+        </tr>
+        <tr>
+          <th>Mapped ?</th>
+          <th>Database ID</th>
+          <th>Database Name</th>
+          <th>Database ID</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-database let-editing="editing">
+        <tr
+          [ngClass]="
+            database.existsInDestination === true
+              ? 'mapped'
+              : 'unmapped' && database.isMapped === true
+              ? 'mapped'
+              : 'unmapped'
+          "
+        >
+          <td>
+            <i
+              *ngIf="database.existsInDestination || database.isMapped"
+              class="pi pi-check-circle"
+            ></i>
+            <i
+              *ngIf="!database.existsInDestination && !database.isMapped"
+              class="pi pi-ban"
+            ></i>
+          </td>
+          <td>{{ database.origin.id }}</td>
+          <td>{{ database.origin.name }}</td>
+          <td
+            [pEditableColumn]="database.destination.id"
+            pEditableColumnField="id"
+          >
+            <p-cellEditor
+              class="pi pi-pencil"
+              (change)="
+                onSelectDatabase(database.origin.id, database.destination.id)
+              "
+            >
+              <ng-template pTemplate="input">
+                <input
+                  pInputText
+                  type="number"
+                  [(ngModel)]="database.destination.id"
+                />
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{ database.destination.id }}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <p-card
+    *ngIf="model.dependencies.collections.length > 0"
+    header="Map or create following collections"
+    class="col-12 mt-2"
+  >
+    <p-table [value]="model.dependencies.collections" dataKey="id">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>&nbsp;</th>
+          <th colspan="3">Instance : {{ originInstance.name }}</th>
+          <th colspan="4">Instance : {{ destinationInstance.name }}</th>
+        </tr>
+        <tr>
+          <th>Mapped ?</th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Create new ?</th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Location</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-collection let-editing="editing">
+        <tr
+          [ngClass]="
+            collection.existsInDestination === true
+              ? 'mapped'
+              : 'unmapped' && collection.isMapped === true
+              ? 'mapped'
+              : 'unmapped'
+          "
+        >
+          <td>
+            <i
+              *ngIf="collection.existsInDestination || collection.isMapped"
+              class="pi pi-check-circle"
+            ></i>
+            <i
+              *ngIf="!collection.existsInDestination && !collection.isMapped"
+              class="pi pi-ban"
+            ></i>
+          </td>
+          <td>{{ collection.origin.id }}</td>
+          <td>{{ collection.origin.name }}</td>
+          <td>{{ collection.origin.location }}</td>
+          <td>
+            <p-inputSwitch
+              [(ngModel)]="collection.createInDestination"
+              [disabled]="collection.existsInDestination"
+              (onChange)="onCreateCollectionSwitch(collection.origin.id)"
+            ></p-inputSwitch>
+          </td>
+          <td>{{ collection?.destination?.id }}</td>
+          <td>{{ collection?.destination?.name }}</td>
+          <td>{{ collection?.destination?.location }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <p-card header="Map following users : " class="col-12 mt-2">
+    <p-table [value]="model.dependencies.users" dataKey="id">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>&nbsp;</th>
+          <th colspan="2">Instance : {{ originInstance.name }}</th>
+          <th colspan="2">Instance : {{ destinationInstance.name }}</th>
+        </tr>
+        <tr>
+          <th>Mapped ?</th>
+          <th>ID</th>
+          <th>Email</th>
+          <th>ID</th>
+          <th>Email</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-user let-editing="editing">
+        <tr
+          [ngClass]="
+            user.existsInDestination === true
+              ? 'mapped'
+              : 'unmapped' && user.isMapped === true
+              ? 'mapped'
+              : 'unmapped'
+          "
+        >
+          <td>
+            <i
+              *ngIf="user.existsInDestination || user.isMapped"
+              class="pi pi-check-circle"
+            ></i>
+            <i
+              *ngIf="!user.existsInDestination && !user.isMapped"
+              class="pi pi-ban"
+            ></i>
+          </td>
+          <td>{{ user.origin.id }}</td>
+          <td>{{ user.origin.email }}</td>
+          <td
+            [pEditableColumn]="user?.destination?.id"
+            pEditableColumnField="id"
+          >
+            <p-cellEditor
+              class="pi pi-pencil"
+              (change)="onSelectUser(user.origin.id)"
+            >
+              <ng-template pTemplate="input">
+                <input
+                  pInputText
+                  type="number"
+                  [(ngModel)]="user.destination.id"
+                />
+                <!--<select pInputText [(ngModel)]="user.destination.id">
+                <option
+                  *ngFor="let user of destinationUsers"
+                  [ngValue]="user.id"
+                >
+                  {{ user.email }} (#{{ user.id }})
+                </option>
+              </select>-->
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{ user?.destination?.id }}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td>{{ user?.destination?.email }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <p-card
+    *ngIf="model.existsInDestination"
+    header="A dashboard with name
+              {{ model.origin.name }} was found in
+              destination."
+    class="col-12 mt-2"
+  >
+    <p>You can create a new one or update this existing one :</p>
+    <p-selectButton
+      [options]="createOrUpdate"
+      (onChange)="oncreateOrUpdateModel()"
+      [(ngModel)]="model.origin.createOrUpdate"
+    ></p-selectButton>
+  </p-card>
+</div>
+<div *ngIf="!isLoaded" class="col-12">
+  Fetching you model dependencies
+  <p-progressBar mode="indeterminate"></p-progressBar>
+</div>
+
+<div class="col-12 mt-5">
+  <span class="p-buttonset">
+    <button
+      type="button"
+      pButton
+      label="Go back"
+      class="p-button-secondary"
+      (click)="onPreviousStep()"
+    ></button>
+    <button
+      pButton
+      [label]="step2SubmitLabel"
+      (click)="onSubmitStep2()"
+      [disabled]="!entitiesMapped"
+    ></button>
+  </span>
+</div>

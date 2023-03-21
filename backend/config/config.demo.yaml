@@ -1,0 +1,5 @@
+jwt:
+  access_secret: 'YOUR_RANDOM_SECRET'
+  refresh_secret: 'ANOTHER__RANDOM_SECRET'
+auth:
+  saltRounds: 10

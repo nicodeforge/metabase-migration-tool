@@ -1,0 +1,18 @@
+<form [formGroup]="userForm" class="grid" (ngSubmit)="onFormSubmit()">
+  <div class="col-12 mt-5">
+    <input type="hidden" formControlName="id" />
+    <span class="p-float-label">
+      <input type="text" pInputText formControlName="name" id="name" />
+      <label for="name">Your display name</label>
+    </span>
+  </div>
+  <div class="col-12 mt-5">
+    <span class="p-float-label">
+      <input type="email" pInputText formControlName="email" id="email" />
+      <label for="email">Your email</label>
+    </span>
+  </div>
+  <div class="col-12 mt-5">
+    <p-button label="Update" type="submit"></p-button>
+  </div>
+</form>

@@ -1,0 +1,69 @@
+<div class="grid p-fluid">
+  <div class="col-12" *ngIf="step === 1">
+    <p-card
+      [header]="
+        originInstance.name && destinationInstance.name
+          ? 'Copy card from ' +
+            originInstance.name +
+            ' to ' +
+            destinationInstance.name
+          : 'Copy card across instances'
+      "
+    >
+      <app-intance-select
+        (instancesSelected)="onInstancesSelected($event)"
+        [resetForm]="resetInstanceSelectForm"
+      ></app-intance-select>
+
+      <div *ngIf="!cards && isLoading">
+        <p>Fetching cards</p>
+        <p-progressBar mode="indeterminate"></p-progressBar>
+      </div>
+      <p-multiSelect
+        *ngIf="cards"
+        [options]="cards"
+        [selectionLimit]="1"
+        selectedItemsLabel="display_name"
+        optionLabel="display_name"
+        optionValue="id"
+        placeholder="Card to duplicate"
+        emptyMessage="Please select an origin instance"
+        (onChange)="onSelectCard($event.value[0])"
+      >
+      </p-multiSelect>
+      <p>&nbsp;</p>
+      <p-button
+        label="Proceed"
+        class="mt-5"
+        [disabled]="!originInstance || !destinationInstance || !originCard"
+        (onClick)="onSubmitStep1()"
+      ></p-button>
+    </p-card>
+  </div>
+  <div class="col-12" *ngIf="step === 2">
+    <app-dependency-mapping
+      [modelType]="modelType"
+      [originModel]="originCard"
+      [originInstance]="originInstance"
+      [destinationInstance]="destinationInstance"
+      (modelToCreate)="onSubmitStep2($event)"
+    ></app-dependency-mapping>
+  </div>
+  <div class="col-12" *ngIf="step === 3">
+    <app-model-creation-review
+      [modelType]="modelType"
+      [modelToCreate]="modelToCreate"
+      [destinationInstance]="destinationInstance"
+      (confirm)="onSubmitStep3($event)"
+    ></app-model-creation-review>
+  </div>
+  <div class="col-12" *ngIf="step === 4">
+    <app-model-creation-status
+      [modelType]="modelType"
+      [modelResponse]="modelCreationResponse"
+      [isLoaded]="!isLoading"
+      (onNavigate)="handleNavigateToModel($event)"
+      (onRestart)="handleRestart($event)"
+    ></app-model-creation-status>
+  </div>
+</div>

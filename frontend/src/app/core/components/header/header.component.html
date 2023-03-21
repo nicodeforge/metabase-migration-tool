@@ -1,0 +1,21 @@
+<p-menubar
+  class="mb-5"
+  [model]="isAuthenticated === true ? userMenuItems : publicMenuItems"
+>
+  <ng-template pTemplate="start">
+    <a [routerLink]="isAuthenticated === true ? '/app' : '/'" class="app-title">
+      <strong class="mr-5">Metabase Migration Tool</strong></a
+    >
+  </ng-template>
+  <ng-template pTemplate="end">
+    <button
+      *ngIf="!isAuthenticated"
+      pButton
+      type="button"
+      icon="pi pi-sign-in"
+      label="Sign in"
+      class="p-button-text"
+      (click)="onSignIn()"
+    ></button>
+  </ng-template>
+</p-menubar>

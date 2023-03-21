@@ -1,0 +1,60 @@
+<div class="grid">
+  <div class="col-12">
+    <p-card
+      [header]="
+        isEditMode ? 'Edit instance #' + instanceId : 'Create a new instance'
+      "
+    >
+      <form [formGroup]="instanceForm" class="grid" (ngSubmit)="onFormSubmit()">
+        <div class="col-12">
+          <input type="hidden" formControlName="id" />
+          <span class="p-float-label">
+            <input
+              type="text"
+              pInputText
+              formControlName="name"
+              placeholder="Instance name"
+              id="name"
+            />
+            <label for="name">Instance name</label>
+          </span>
+        </div>
+        <div class="col-12 mt-3">
+          <span class="p-float-label">
+            <input
+              type="text"
+              pInputText
+              formControlName="username"
+              id="username"
+              placeholder="Instance super-user username"
+            />
+            <label for="username">Instance super-user username</label>
+          </span>
+        </div>
+        <div class="col-12 mt-3">
+          <span class="p-float-label">
+            <input
+              type="text"
+              pInputText
+              formControlName="url"
+              placeholder="Instance URL"
+              id="url"
+            />
+
+            <label for="url"
+              >Instance url - Do not include trailing slash</label
+            >
+          </span>
+        </div>
+        <div class="col-12">
+          <button
+            pButton
+            type="submit"
+            [label]="isEditMode ? 'Update' : 'Create'"
+            [disabled]="instanceForm.invalid"
+          ></button>
+        </div>
+      </form>
+    </p-card>
+  </div>
+</div>
