@@ -131,7 +131,40 @@ export class CardService {
         }
       }
 
-      if (typeof dataSetQuery?.query['order-by'] != 'undefined') {
+      if (typeof dataSetQuery?.query?.filter != 'undefined') {
+        if (dataSetQuery?.query?.filter?.length > 0) {
+          if (dataSetQuery?.query?.filter[0] === '=') {
+            //One filter ONLY
+            if (dataSetQuery?.query?.filter[1][0] === 'field') {
+              const originalFieldId = dataSetQuery?.query?.filter[1][1];
+              dataSetQuery.query.filter[1][1] =
+                await this.fieldService.findOriginFieldIdInDestination(
+                  originInstance,
+                  destinationInstance,
+                  originalFieldId,
+                );
+            }
+          } else {
+            //More than one filter
+            console.log('Multiple filters barely supported');
+            for (const filter of dataSetQuery.query.filter) {
+              if (typeof filter != 'string') {
+                if (filter[1][0] === 'field') {
+                  const originalFieldId = filter[1][1];
+                  filter[1][1] =
+                    await this.fieldService.findOriginFieldIdInDestination(
+                      originInstance,
+                      destinationInstance,
+                      originalFieldId,
+                    );
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (typeof dataSetQuery?.query?.['order-by'] != 'undefined') {
         if (dataSetQuery?.query['order-by']?.length > 0) {
           for (const orderBy of dataSetQuery.query['order-by']) {
             if (orderBy[1][0] === 'field') {
