@@ -131,6 +131,22 @@ export class CardService {
         }
       }
 
+      if (typeof dataSetQuery?.query['order-by'] != 'undefined') {
+        if (dataSetQuery?.query['order-by']?.length > 0) {
+          for (const orderBy of dataSetQuery.query['order-by']) {
+            if (orderBy[1][0] === 'field') {
+              const originalFieldId = orderBy[1][1];
+              orderBy[1][1] =
+                await this.fieldService.findOriginFieldIdInDestination(
+                  originInstance,
+                  destinationInstance,
+                  originalFieldId,
+                );
+            }
+          }
+        }
+      }
+
       if (typeof dataSetQuery?.query?.joins != 'undefined') {
         if (dataSetQuery?.query?.joins?.length > 0) {
           for (const join of dataSetQuery.query.joins) {
