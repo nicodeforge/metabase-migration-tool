@@ -6,5 +6,8 @@ export class VisualQueryDto {
 
   joins: JoinDto[];
 
+  'order-by': Array<any>;
+
+  filter: Array<any>;
   'source-table': number;
 }
