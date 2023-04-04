@@ -164,7 +164,7 @@ export class CardService {
         }
       }
 
-      if (typeof dataSetQuery?.query?.['order-by'] != 'undefined') {
+      if (typeof dataSetQuery?.query['order-by'] != 'undefined') {
         if (dataSetQuery?.query['order-by']?.length > 0) {
           for (const orderBy of dataSetQuery.query['order-by']) {
             if (orderBy[1][0] === 'field') {
