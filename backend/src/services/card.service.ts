@@ -184,13 +184,22 @@ export class CardService {
         if (dataSetQuery?.query?.joins?.length > 0) {
           for (const join of dataSetQuery.query.joins) {
             if (join['condition'][0] === '=') {
-              if (join['condition'][1][0] === 'field')
+              if (join['condition'][1][0] === 'field') {
                 join['condition'][1][1] =
                   await this.fieldService.findOriginFieldIdInDestination(
                     originInstance,
                     destinationInstance,
                     join['condition'][1][1],
                   );
+              }
+              if (join['condition'][2][0] === 'field') {
+                join['condition'][2][1] =
+                  await this.fieldService.findOriginFieldIdInDestination(
+                    originInstance,
+                    destinationInstance,
+                    join['condition'][2][1],
+                  );
+              }
             }
             const joinSourceTable =
               await this.tableService.getOriginTableInDestination(
